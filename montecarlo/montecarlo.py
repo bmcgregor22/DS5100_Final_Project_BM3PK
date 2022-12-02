@@ -40,7 +40,6 @@ class Die():
         
         arg[1] specifies  the face that is to be changed
         arg[2] specified the weight that the face will be changed
-        
         """
 
         self.face=a_face
@@ -83,6 +82,7 @@ class Die():
         """
         Method to show the current set of die faces and weights, reflecting any changes to weights. Returns the die object as a panda dataframe.
         """
+        
         return self.die_df
     
 class Game():
@@ -103,10 +103,12 @@ class Game():
     show_results(self, format="W') - displays the results of the game in wide format by default. For narrow format, specify format='N'
     
     """
+
     def __init__(self, l_die_objects):
         """
         Create the game instance based on a list of die objects
         """
+        
         #initialize the game with a list of similarily defined  die objects.
         self.die_objects = l_die_objects
         
@@ -152,6 +154,7 @@ class Game():
         rolled
         
         _game_results_narrow - private dataframe to store the narrow format with two column index
+        
         """
         
         self.format = format
@@ -171,22 +174,38 @@ class Game():
         
 class Analyzer():
     """
-    This is the docstring for the Analyzer class.  Analyzes the results of a game.
+    This is the docstring for the Analyzer class.  Analyzes the results of a game and produces various statistics about the game
+    such as the number of jackpots and combinations
 
     Attributes
     ---------
+    face_counts_per_roll_df - a dataframe storing the count of the  number of faces per roll
+
+    jackpot_df - an data frame storing the number of jackpots
+
+    combo_df = a dataframe storing the distinct combinations rolled and their counts
+    
 
     Methods
     ---------
+    __init__ (self, a_game_object) - constructor method based on being passed a game object
+
+    face_counts_per_roll(self) - method to compute how many times a given face is rolled in each event.
+
+    jackpot(self) - method to compute the number of jackpots in a game
+
+    combo(self) - method to compute the number of distinct combinations produced in a game
+    
     """
             
     def __init__(self, a_game_object):
         """
         Creates an instance of the Analyzer class provided the game results.
 
-        Arg1 - a game object inseance
+        Arg1 - a game object instance
         """
-        #store the dataframe results in the narrow and wide format calll sh
+        
+        #store the dataframe results in the narrow and wide format
         self.game_results_data_n = a_game_object.show('N')
         self.game_results_data_w = a_game_object.show()
 
@@ -196,31 +215,41 @@ class Analyzer():
         """
         Computes how many times a given face is rolled in each event.
         """
-        self.face_counts_per_roll = self.game_results_data_n.groupby(['Roll Number','Face Rolled']).value_counts().reset_index(name='Counts')
 
-        return self.face_counts_per_roll  
+        self.face_counts_per_roll_df = \
+        self.game_results_data_n.\
+        groupby(['Roll Number','Face Rolled']).\
+        value_counts().\
+        reset_index(name='Counts')
 
-
+        return self.face_counts_per_roll_df
+    
     
     def jackpot(self):
-
-        print ("Congratulations! You Scored a jackpot")
+        """
+        Compute the number of jackpots (rolls with the all the faces of the same value)
+        """
+    
         #use apply function to compute the lengths of each set, sets with length 1 are jackpots
         jackpot_df= self.game_results_data_w.apply(lambda x: len(set(x)), axis=1).\
         to_frame("jackpot")
 
         #filter data frame to just the sets of length 1 = these are the jackpots
         jackpot_df=jackpot_df[jackpot_df['jackpot']==1]
-        num_jackpots = len(jackpot_df)
+        
+        #length of the data frame is the number of jackpots in game
+        jackpot = len(jackpot_df)
 
-        return num_jackpots
+        return jackpot
 
 
     def combo(self):
         """
         Computes the number of distinct combinatinos
-        """   
-        combo_df = self.game_results_data_w.apply(lambda x: x.sort_values().squeeze(), axis=1).value_counts().to_frame('n')
+        """
+
+        combo_df = self.game_results_data_w.apply(lambda x: x.sort_values().squeeze(), axis=1).\
+        value_counts().to_frame('n')
         
         return combo_df
                 
