@@ -172,16 +172,12 @@ class Game():
 class Analyzer():
     """
     This is the docstring for the Analyzer class.  Analyzes the results of a game.
-    
+
     Attributes
     ---------
 
     Methods
     ---------
-
-
-
-
     """
             
     def __init__(self, a_game_object):
@@ -193,6 +189,7 @@ class Analyzer():
         #store the dataframe results in the narrow and wide format calll sh
         self.game_results_data_n = a_game_object.show('N')
         self.game_results_data_w = a_game_object.show()
+
                
         
     def face_counts_per_roll(self):
@@ -201,21 +198,23 @@ class Analyzer():
         """
         self.face_counts_per_roll = self.game_results_data_n.groupby(['Roll Number','Face Rolled']).value_counts().reset_index(name='Counts')
 
-        return self.face_counts_per_roll   
-    
+        return self.face_counts_per_roll  
+
+
     
     def jackpot(self):
-        """
-        Computes how many times the game resulted in all faces being identical
-        """
 
-    def permutation(self):
-        """
-        Computes the number of sequences and their counts
-        """
-        self.perm = self.game_results_data_w.apply(lambda x: x.squeeze(), axis=1).value_counts().reset_index(name='Counts')
+        print ("Congratulations! You Scored a jackpot")
+        #use apply function to compute the lengths of each set, sets with length 1 are jackpots
+        jackpot_df= self.game_results_data_w.apply(lambda x: len(set(x)), axis=1).\
+        to_frame("jackpot")
 
-        return self.perm
+        #filter data frame to just the sets of length 1 = these are the jackpots
+        jackpot_df=jackpot_df[jackpot_df['jackpot']==1]
+        num_jackpots = len(jackpot_df)
+
+        return num_jackpots
+
 
     def combo(self):
         """
