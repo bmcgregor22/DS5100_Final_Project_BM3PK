@@ -48,6 +48,7 @@ class Die():
             #update the value of weight in the data frame to the weight given by the argument
             self.die_df.loc[self.die_df['face'] == self.face, ['weight']] = self.weight
 
+
         else :
             #if the face does not exist in the array then exit
             raise Exception("Value for face not in the face array. Must specify a valid value for face")
@@ -173,12 +174,13 @@ class Game():
 
 class Analyzer():
     """
-    This is the docstring for the Analyzer class.  Analyzes the results of a game and produces various statistics about the game
-    such as the number of jackpots and combinations
+    Analyzes the results of a game and produces various statistics about the game such as the number of jackpots and combinations
 
     Attributes
     ---------
     face_counts_per_roll_df - a dataframe storing the count of the  number of faces per roll
+
+    jackpot - the number of jackpots rolled
 
     jackpot_df - an data frame storing the number of jackpots
 
@@ -212,7 +214,7 @@ class Analyzer():
 
     def face_counts_per_roll(self):
         """
-        Computes how many times a given face is rolled in each event.
+        Computes how many times a given face is rolled in each event. Returns the results in a data frame face_counts_per_roll_df.
         """
 
         self.face_counts_per_roll_df = \
@@ -226,7 +228,7 @@ class Analyzer():
 
     def jackpot(self):
         """
-        Compute the number of jackpots (rolls with the all the faces of the same value)
+        Compute the number of jackpots (rolls with the all the faces of the same value). Returns the number of jackpots rolled.
         """
 
         #use apply function to compute the lengths of each set, sets with length 1 are jackpots
@@ -244,7 +246,7 @@ class Analyzer():
 
     def combo(self):
         """
-        Computes the number of distinct combinatinos
+        Computes the number of distinct combinatinos. Returns the combo_df dataframe.
         """
 
         combo_df = self.game_results_data_w.apply(lambda x: x.sort_values().squeeze(), axis=1).\
