@@ -7,32 +7,8 @@ class MonteCarloTestSuite(unittest.TestCase):
     '''
     This test suite executes unit tests to verify that all class methods are working as designed.
     '''
-    def test_0_create_die(self):
-        '''
-        Unit test to test the initializer method for the Die Class.
-        Verify that a data frame was intialized correcty based on an array of faces and default weights
-        '''
-        #create a test die with 6 faces, all six sides are initiaized with a weight of 1.0
-        test1 = Die(pd.array(data=[1,2,3,4,5,6]))
-        print ("Printing Die Object")
-        print (test1.die_df)
-
-        #create a  data frame with identical values for face and weight
-        test_data={
-                    'face':[1,2,3,4,5,6],
-                    'weight':[1.0,1.0,1.0,1.0,1.0,1.0]
-        }
-        test_df=pd.DataFrame(test_data)
-        test_df.set_index('face', inplace=True)
-
-        message="Test Result is False"
-        print ("Printing the test die based on test data ")
-        print (test_df)
-
-        # check to see if the data frames are equal
-        self.assertTrue(pd.DataFrame.equals(test1.die_df,test_df), message)
-
-    def test_1_create_die(self):
+        
+    def test_1_create_die_set_weights(self):
         '''
         Unit test to test the initializer method for the Die Class.
         Verify that weights are set to 1 upon object creation for every face of the die.
@@ -54,7 +30,7 @@ class MonteCarloTestSuite(unittest.TestCase):
     def test_2_change_die_weight(self):
         '''
         Unit test to test method change_weight for the Die class.
-        Create a die change its weight passing an integer and
+        Create a die change its weight passing an integer
         '''
         #create a test die
         test1 = Die(pd.array(data=[1,2,3,4,5,6]))
@@ -62,14 +38,18 @@ class MonteCarloTestSuite(unittest.TestCase):
         print (test1.die_df)
 
         #change the weight of the first face to 3
-        test1.change_weight(1,3)
+        face = 1
+        weight=3
+        test1.change_weight(face,weight)
 
         #test that the resulting weight is a float
         expected = 3.0
 
         #extract the weight based on the value of the first face
-        test_value = test1.die_df.loc[1,'weight']
 
+        test_value = test1.die_df[test1.die_df.face==face].weight.item()
+
+        print (test_value)
         self.assertEqual(test_value, expected)
         print ("Printing the die after weight of first face is changed")
         print (test1.die_df)
